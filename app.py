@@ -85,4 +85,5 @@ def analiz():
     toplam = sum([h[0] for h in hareketler])
     return render_template("analiz.html", toplam=toplam)
 
-app.run(host="0.0.0.0", port=5000)
+if __name__ == "__main__":
+    app.run(debug=True)
