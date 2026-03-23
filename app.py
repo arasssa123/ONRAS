@@ -5,6 +5,7 @@ from datetime import datetime
 app = Flask(__name__)
 app.secret_key = "secret123"
 
+init_db()
 def get_db():
     return sqlite3.connect("database.db")
 
