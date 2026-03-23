@@ -15,7 +15,7 @@ def init_db():
     db.execute("CREATE TABLE IF NOT EXISTS hareketler (id INTEGER PRIMARY KEY, urun_id INTEGER, miktar INTEGER, tarih TEXT)")
     db.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, username TEXT, password TEXT)")
 
-    # kullanıcı var mı kontrol et
+    # kullanıcı kontrol
     user = db.execute("SELECT * FROM users WHERE username=?", ("onras",)).fetchone()
 
     if not user:
@@ -23,11 +23,6 @@ def init_db():
 
     db.commit()
 
-if not user:
-    db.execute("INSERT INTO users (username,password) VALUES ('onras','2710')")
-    db.commit()
-
-init_db()
 
 @app.route("/login", methods=["GET","POST"])
 def login():
