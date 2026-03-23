@@ -1,13 +1,16 @@
 from flask import Flask, render_template, request, redirect, session
 import sqlite3
 from datetime import datetime
+import os
 
 app = Flask(__name__)
 app.secret_key = "secret123"
 
+DB_PATH = "/tmp/database.db"
+
 
 def get_db():
-    conn = sqlite3.connect("/tmp/database.db")
+    conn = sqlite3.connect(DB_PATH)
     return conn
 
 
@@ -24,8 +27,13 @@ def init_db():
         db.execute("INSERT INTO users (username,password) VALUES (?,?)", ("onras","2710"))
 
     db.commit()
+    db.close()
 
-init_db()
+
+@app.before_request
+def before_request():
+    init_db()
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -34,7 +42,10 @@ def login():
         pw = request.form["password"]
 
         db = get_db()
-        result = db.execute("SELECT * FROM users WHERE username=? AND password=?", (user, pw)).fetchone()
+        result = db.execute(
+            "SELECT * FROM users WHERE username=? AND password=?",
+            (user, pw)
+        ).fetchone()
 
         if result:
             session["user"] = user
@@ -51,7 +62,6 @@ def logout():
 
 @app.route("/")
 def index():
-    init_db()
     if "user" not in session:
         return redirect("/login")
 
@@ -63,8 +73,10 @@ def index():
 @app.route("/ekle", methods=["POST"])
 def ekle():
     db = get_db()
-    db.execute("INSERT INTO urunler (ad, stok) VALUES (?,?)",
-               (request.form["ad"], request.form["stok"]))
+    db.execute(
+        "INSERT INTO urunler (ad, stok) VALUES (?,?)",
+        (request.form["ad"], request.form["stok"])
+    )
     db.commit()
     return redirect("/")
 
@@ -76,8 +88,10 @@ def giris():
     miktar = int(request.form["miktar"])
 
     db.execute("UPDATE urunler SET stok = stok + ? WHERE id=?", (miktar, urun_id))
-    db.execute("INSERT INTO hareketler (urun_id, miktar, tarih) VALUES (?,?,?)",
-               (urun_id, miktar, datetime.now()))
+    db.execute(
+        "INSERT INTO hareketler (urun_id, miktar, tarih) VALUES (?,?,?)",
+        (urun_id, miktar, datetime.now())
+    )
 
     db.commit()
     return redirect("/")
@@ -90,8 +104,10 @@ def cikis():
     miktar = int(request.form["miktar"])
 
     db.execute("UPDATE urunler SET stok = stok - ? WHERE id=?", (miktar, urun_id))
-    db.execute("INSERT INTO hareketler (urun_id, miktar, tarih) VALUES (?,?,?)",
-               (urun_id, -miktar, datetime.now()))
+    db.execute(
+        "INSERT INTO hareketler (urun_id, miktar, tarih) VALUES (?,?,?)",
+        (urun_id, -miktar, datetime.now())
+    )
 
     db.commit()
     return redirect("/")
@@ -105,8 +121,6 @@ def analiz():
 
     return render_template("analiz.html", toplam=toplam)
 
-
-import os
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
