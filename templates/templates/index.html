@@ -1,0 +1,31 @@
+<h2>Ürünler</h2>
+
+<form action="/ekle" method="post">
+    <input name="ad" placeholder="Ürün">
+    <input name="stok" type="number">
+    <button>Ekle</button>
+</form>
+
+<ul>
+{% for u in urunler %}
+<li>
+    {{u[1]}} - Stok: {{u[2]}}
+
+    <form action="/giris" method="post">
+        <input type="hidden" name="id" value="{{u[0]}}">
+        <input name="miktar" type="number">
+        <button>+</button>
+    </form>
+
+    <form action="/cikis" method="post">
+        <input type="hidden" name="id" value="{{u[0]}}">
+        <input name="miktar" type="number">
+        <button>-</button>
+    </form>
+
+</li>
+{% endfor %}
+</ul>
+
+<a href="/analiz">Analiz</a>
+<a href="/logout">Çıkış</a>
