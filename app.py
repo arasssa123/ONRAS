@@ -5,10 +5,8 @@ from datetime import datetime
 app = Flask(__name__)
 app.secret_key = "secret123"
 
-init_db()
 def get_db():
     return sqlite3.connect("database.db")
-
 def init_db():
     db = get_db()
 
@@ -24,7 +22,8 @@ def init_db():
 
     db.commit()
 
-
+init_db()
+ 
 @app.route("/login", methods=["GET","POST"])
 def login():
     if request.method == "POST":
