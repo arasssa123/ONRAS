@@ -13,7 +13,10 @@ def init_db():
     db.execute("CREATE TABLE IF NOT EXISTS urunler (id INTEGER PRIMARY KEY, ad TEXT, stok INTEGER)")
     db.execute("CREATE TABLE IF NOT EXISTS hareketler (id INTEGER PRIMARY KEY, urun_id INTEGER, miktar INTEGER, tarih TEXT)")
     db.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, username TEXT, password TEXT)")
-    db.execute("INSERT INTO users (username,password) VALUES ('admin','1234')")
+   user = db.execute("SELECT * FROM users WHERE username='onras'").fetchone()
+
+if not user:
+    db.execute("INSERT INTO users (username,password) VALUES ('onras','2710')")
     db.commit()
 
 init_db()
