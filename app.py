@@ -8,7 +8,6 @@ app.secret_key = "secret123"
 
 def get_db():
     conn = sqlite3.connect("/tmp/database.db")
-    conn.row_factory = sqlite3.Row
     return conn
 
 
@@ -52,6 +51,7 @@ def logout():
 
 @app.route("/")
 def index():
+    init_db()
     if "user" not in session:
         return redirect("/login")
 
